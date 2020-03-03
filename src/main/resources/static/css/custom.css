@@ -1,0 +1,33 @@
+
+.mbr-section-btn a.btn-group:not(.btn-form) {
+  border-radius: 5px;
+}
+.mbr-section-btn a.btn-group:not(.btn-form):hover,
+.mbr-section-btn a.btn-group:not(.btn-form):focus {
+  box-shadow: none !important;
+}
+.mbr-section-btn a.btn-group:not(.btn-form):hover,
+.mbr-section-btn a.btn-group:not(.btn-form):focus {
+  box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.2) !important;
+  -webkit-box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.2) !important;
+}
+
+/*! Buttons */
+.btn-group {
+  font-weight: 500;
+  border-width: 2px;
+  font-style: normal;
+  letter-spacing: 1px;
+  margin: .4rem .4rem;
+  padding: .8rem 1.2rem;
+  white-space: normal;
+  -webkit-transition: all .3s ease-in-out;
+  -moz-transition: all .3s ease-in-out;
+  transition: all .3s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  word-break: break-word;
+  -webkit-align-items: center;
+  -webkit-justify-content: center;
+  display: -webkit-inline-flex; }
