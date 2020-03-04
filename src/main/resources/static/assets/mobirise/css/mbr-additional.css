@@ -1206,61 +1206,36 @@ section.lazy-placeholder:after {
 .cid-rSbBa3E5xJ .dataTables_wrapper .table {
   overflow-x: auto;
 }
-.cid-rSbBa3E5xJ table {
-  width: 100% !important;
-  margin-top: 6px;
-  border: 1px solid #cccccc;
+/* Checkbox Number */
+.cid-rSbBa3E5xJ .counter-container {
+  color: #767676;
+}
+.cid-rSbBa3E5xJ .counter-container ul {
   margin-bottom: 0;
 }
-.cid-rSbBa3E5xJ table th {
-  border-top: none;
+.cid-rSbBa3E5xJ .counter-container ul li {
+  margin-bottom: 1rem;
+  list-style: none;
+}
+.cid-rSbBa3E5xJ .counter-container ul li:before {
+  position: absolute;
+  left: 0px;
+  margin-top: -10px;
+  padding-top: 3px;
+  content: '';
+  display: inline-block;
+  text-align: center;
+  margin: 5px 10px;
+  line-height: 20px;
   transition: all .2s;
-  border-bottom: none;
+  color: #ffffff;
+  background: #149dcc;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  content: '✓';
 }
-.cid-rSbBa3E5xJ table th:hover {
-  background: #cccccc;
-  color: #000000;
-}
-.cid-rSbBa3E5xJ table td {
-  border-top: 1px solid #cccccc;
-}
-.cid-rSbBa3E5xJ table.table {
-  background: #ffffff;
-}
-.cid-rSbBa3E5xJ .dataTables_filter {
-  text-align: right;
-  margin-bottom: .5rem;
-}
-.cid-rSbBa3E5xJ .dataTables_filter label {
-  display: inline;
-  white-space: normal !important;
-}
-.cid-rSbBa3E5xJ .dataTables_filter input {
-  display: inline;
-  width: auto;
-  margin-left: .5rem;
-  border-radius: 100px;
-  padding-left: 1rem;
-}
-.cid-rSbBa3E5xJ .dataTables_info {
-  padding-bottom: 1rem;
-  padding-top: 1rem;
-  white-space: normal !important;
-}
-@media (max-width: 992px) {
-  .cid-rSbBa3E5xJ .dataTables_filter {
-    text-align: center;
-  }
-}
-@media (max-width: 350px) {
-  .cid-rSbBa3E5xJ .dataTables_filter {
-    text-align: center;
-  }
-  .cid-rSbBa3E5xJ .dataTables_filter input {
-    width: 100% !important;
-    margin-left: 0 !important;
-  }
-}
+
 .cid-rSbNebz5O5 {
   padding-top: 60px;
   padding-bottom: 60px;
