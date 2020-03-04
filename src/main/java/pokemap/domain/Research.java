@@ -9,5 +9,11 @@ import lombok.ToString;
 @ToString
 public class Research {
 
+	private String researchId;
+	private String code;
 	private String name;
+	private String rewardType;
+	private String rewardName;
+	private String year;
+	private String month;
 }

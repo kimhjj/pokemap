@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	<th:block th:fragment="researchListTemplate">
+		<th:block th:if="${researchList != null and !researchList.empty}">
+			<th:block th:each="research : ${researchList}">
+				<li>
+					<strong th:text="*{research.name}"></strong>
+					<br />
+					<span th:text="*{research.rewardName}"></span>
+				</li>
+			</th:block>
+		</th:block>
+	</th:block>
+</html>
