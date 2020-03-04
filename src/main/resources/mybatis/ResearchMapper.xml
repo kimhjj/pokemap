@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pokemap.persistence.ResearchMapper">
+
+	<!-- 리서치 목록 -->
+	<select id="getResearchList" resultType="research">
+		/* getResearchList */
+		SELECT *
+		FROM research_info
+		WHERE year = '2020'
+		AND month = '03'
+	</select>
+
+</mapper>
