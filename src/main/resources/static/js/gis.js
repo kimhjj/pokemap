@@ -1,4 +1,9 @@
-function init() {
+var MapInit = function(policy) {
+
+    if (!(this instanceof MapInit)) {
+        throw new Error("New 를 통해 생성 하십시오.");
+    }
+
 	// set value
 	var centerPoint = [126.942803, 37.483040];
 	var vworldTile = new ol.layer.Tile({
@@ -41,7 +46,6 @@ function init() {
             	]
             })
         ],
-        target: 'map',
         renderer: 'canvas',
         interactions: ol.interaction.defaults({
             shiftDragZoom : true
@@ -64,6 +68,13 @@ function init() {
     	feature.setGeometryName('location');
         transactWFS('insert', feature);
     });
+
+    return {
+    	create: function(element) {
+    		map.setTarget(element);
+    		return map;
+    	}
+    }
 }
 
 //var getCurProj: function() {
@@ -170,3 +181,10 @@ draw.on('drawend', function(evt) {
         featureType: "nyc_buildings"
 });
 */
+
+var Pokemap = Pokemap||{
+
+};
+
+Pokemap.GIS = new MapInit({});
+Pokemap.Map = Pokemap.GIS.create('map');
