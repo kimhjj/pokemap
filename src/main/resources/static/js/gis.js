@@ -14,8 +14,34 @@ var MapInit = function(policy) {
 	        url : 'http://xdworld.vworld.kr:8080/2d/Base/201512/{z}/{x}/{y}.png'
 	    })
 	});
-	var pokestopLayer = new ol.layer.Vector({
+	var pokestopLayer = new ol.layer.Image({
+        id: 'pokestop_layer',
+        visible: true,
+        //zIndex : 30,
+        source: new ol.source.ImageWMS({
+            url: 'http://localhost:8080/geoserver/pokemap/wms',
+            params: {
+                'VERSION' : '1.1.1',
+                'SRS': 'EPSG:3857',
+                'STYLES': 'pokestop',
+                tiled: true,
+                layers: ['pokestop_info']
+                //query_layers : wmsLayerKeys,
+                //CQL_FILTER: queryStrings
+            }
+        })
+    });
+	var drawVector = new ol.layer.Vector({
+		id: 'draw_layer',
+        visible: true,
+        //zIndex : 50,
+        source: new ol.source.Vector({
+            features: new ol.Collection()
+        })
+	});
 
+	var selectInteraction = new ol.interaction.Select({
+		layers : [pokestopLayer]
 	});
 
     // set map
@@ -36,29 +62,31 @@ var MapInit = function(policy) {
             new ol.layer.Group({
                 title: 'Base Maps',
                 layers: [
-                    vworldTile
+                    vworldTile,
+                    pokestopLayer
                 ]
             }),
             new ol.layer.Group({
             	title: 'Vector',
             	layers: [
-            		pokestopLayer
+            		drawVector
             	]
             })
         ],
         renderer: 'canvas',
         interactions: ol.interaction.defaults({
             shiftDragZoom : true
-        }),
+        }).extend([new app.Drag(), selectInteraction]),
         view : new ol.View({
             projection: 'EPSG:3857',
             center: new ol.geom.Point(centerPoint).transform('EPSG:4326', 'EPSG:3857').getCoordinates(),
             zoom: 14,
-            minZoom: 7
+            minZoom: 7,
+            maxZoom: 19
         })
     });
 
-    map.on('singleclick', function(event){
+   /* map.on('singleclick', function(event){
         if (event.dragging) return;
 
         var coord = event.coordinate;
@@ -66,8 +94,11 @@ var MapInit = function(policy) {
         var feature = getFeatureByCoord('Point', transCoord);
         // column name
     	feature.setGeometryName('location');
+
+    	return if(confirm('등록하시겠습니까?'));
+
         transactWFS('insert', feature);
-    });
+    });*/
 
     var formatWFS = new ol.format.WFS();
     var formatGML = new ol.format.GML({
@@ -79,7 +110,6 @@ var MapInit = function(policy) {
     var transactWFS = function(action, feature) {
     	if(feature == null)
     		return;
-
 
     	var node;
     	switch (action) {
