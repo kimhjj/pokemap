@@ -5,6 +5,11 @@ var MapInit = function(policy) {
     }
 
 	// set value
+	var geoserverUrl = 'http://localhost:8080/geoserver';
+	var geoserverWorkspace = 'pokemap';
+	var callGeoserverUrl = geoserverUrl + '/' + geoserverWorkspace;
+	var projection = 'EPSG:3857';
+	var dataProjection = 'EPSG:4326';
 	var centerPoint = [126.942803, 37.483040];
 
 	var vworldTile = new ol.layer.Tile({
@@ -20,10 +25,10 @@ var MapInit = function(policy) {
         id: 'gym_layer',
         visible: true,
         source: new ol.source.ImageWMS({
-            url: 'http://localhost:8080/geoserver/pokemap/wms',
+            url: callGeoserverUrl + '/wms',
             params: {
                 'VERSION' : '1.1.1',
-                'SRS': 'EPSG:3857',
+                'SRS': projection,
                 'STYLES': 'pokestop',
                 tiled: true,
                 layers: ['pokestop_info'],
@@ -41,9 +46,10 @@ var MapInit = function(policy) {
         source: new ol.source.Vector({
             format: new ol.format.GeoJSON(),
             url: function(extent) {
+            	var layerName = 'pokestop_info';
                 var queryString = "code='STOP'";
-                var url = 'http://localhost:8080/geoserver/pokemap/wfs?service=WFS' +
-                    '&version=1.1.0&request=GetFeature&typename=pokestop_info&outputFormat=application/json&srsname=EPSG:3857' +
+                var url = callGeoserverUrl + '/wfs?service=WFS&version=1.1.0&request=GetFeature' +
+                    '&outputFormat=application/json&typename=' + layerName + '&srsname=' + projection +
                     '&CQL_FILTER='+queryString;
                 return url;
             },
@@ -195,8 +201,8 @@ var MapInit = function(policy) {
             shiftDragZoom : true
         }).extend([pokestopSelect]),	//new app.Drag(),
         view : new ol.View({
-            projection: 'EPSG:3857',
-            center: new ol.geom.Point(centerPoint).transform('EPSG:4326', 'EPSG:3857').getCoordinates(),
+            projection: projection,
+            center: new ol.geom.Point(centerPoint).transform(dataProjection, projection).getCoordinates(),
             zoom: 14,
             minZoom: 7,
             maxZoom: 19
@@ -234,7 +240,7 @@ var MapInit = function(policy) {
     	}
 
     	var payload = new XMLSerializer().serializeToString(node);
-    	$.ajax('http://localhost:8080/geoserver/pokemap/wfs', {
+    	$.ajax(callGeoserverUrl + '/wfs', {
     		service: 'WFS',
             type: 'POST',
             dataType: 'xml',
@@ -242,7 +248,7 @@ var MapInit = function(policy) {
             contentType: 'text/xml',
             data: payload,
     	    success: function(data) {
-    	    	console.log(formatWFS.readTransactionResponse(data));
+    	    	//console.log(formatWFS.readTransactionResponse(data));
     	    },
     	    error: function(e) {
     	    	console.error(e);
@@ -276,7 +282,7 @@ var MapInit = function(policy) {
     var transformTo4326 = function(coord) {
         var transCoord = [];
         if(coord) {
-            transCoord = ol.proj.transform(coord, "EPSG:3857", "EPSG:4326");
+            transCoord = ol.proj.transform(coord, projection, 'EPSG:4326');
         }
         return transCoord;
     }
