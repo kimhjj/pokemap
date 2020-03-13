@@ -6,6 +6,7 @@ var MapInit = function(policy) {
 
 	// set value
 	var centerPoint = [126.942803, 37.483040];
+
 	var vworldTile = new ol.layer.Tile({
 	    title : 'VWorld Map',
 	    visible : true,
@@ -14,6 +15,7 @@ var MapInit = function(policy) {
 	        url : 'http://xdworld.vworld.kr:8080/2d/Base/201512/{z}/{x}/{y}.png'
 	    })
 	});
+
 	var gymLayer = new ol.layer.Image({
         id: 'gym_layer',
         visible: true,
@@ -98,8 +100,22 @@ var MapInit = function(policy) {
 			})
 		});
 	}
+	var selectedDrawStyle = function(feature) {
+		return style = new ol.style.Style({
+			image : new ol.style.Circle({
+				radius : 7,
+				fill : new ol.style.Fill({
+					color : '#ffcc33'
+				}),
+				stroke : new ol.style.Stroke({
+					color : 'red',
+					width : 2
+				})
+			})
+		});
+	}
 
-	var selectPokestop = new ol.interaction.Select({
+	var pokestopSelect = new ol.interaction.Select({
 		condition: ol.events.condition.click,
 		layers: [pokestopLayer],
 		style: selectedStyle,
@@ -109,10 +125,30 @@ var MapInit = function(policy) {
 			}
 		}
 	});
+	pokestopSelect.on('select', function(event) {
+	      var features = event.selected;
+	      for(var i in features) {
+	    	  var feature = features[i];
+	    	  var name = feature.getProperties().name;
+	      }
+	});
 
-	var selectDraw = new ol.interaction.Select({
+	// insert
+	var draw = new ol.interaction.Draw({
+		source: source,
+		type: 'Point'
+	});
+	draw.on('drawstart', function(event) {
+		drawLayer.getSource().clear();
+	});
+	draw.on('drawend', function(event) {
+		draw.setActive(false);
+	});
+
+	var drawSelect = new ol.interaction.Select({
 		condition: ol.events.condition.click,
 		layers: [drawLayer],
+		style: selectedDrawStyle,
 		filter: function(feature) {
 			if(Pokemap.insertMode) {
 				return feature;
@@ -121,37 +157,8 @@ var MapInit = function(policy) {
 	});
 
 	var translate = new ol.interaction.Translate({
-	  features: selectDraw.getFeatures()
+		features : drawSelect.getFeatures()
 	});
-
-	var draw = new ol.interaction.Draw({
-		source: source,
-		type: 'Point',
-		condition: function(feature, b, c) {
-			return true;
-		}
-	});
-
-	selectPokestop.on('select', function(event) {
-	      var features = event.selected;
-	      for(var i in features) {
-	    	  var feature = features[i];
-	    	  var name = feature.getProperties().name;
-	      }
-	});
-
-	draw.on('drawstart', function(event){
-		drawLayer.getSource().clear();
-	});
-	draw.on('drawend', function(event){
-		draw.setActive(false);
-	});
-
-//
-//	var addFeatures = selectDraw.getFeatures();
-//	addFeatures.on('add', function(event) {
-//	      debugger
-//    });
 
     // set map
     var map = new ol.Map({
@@ -186,7 +193,7 @@ var MapInit = function(policy) {
         renderer: 'canvas',
         interactions: ol.interaction.defaults({
             shiftDragZoom : true
-        }).extend([selectPokestop]),	//new app.Drag(),
+        }).extend([pokestopSelect]),	//new app.Drag(),
         view : new ol.View({
             projection: 'EPSG:3857',
             center: new ol.geom.Point(centerPoint).transform('EPSG:4326', 'EPSG:3857').getCoordinates(),
@@ -195,22 +202,6 @@ var MapInit = function(policy) {
             maxZoom: 19
         })
     });
-
-   /*map.on('singleclick', function(event){
-        if (event.dragging) return;
-
-        var coord = event.coordinate;
-        var transCoord = transformTo4326(coord);
-        var feature = getFeatureByCoord('Point', transCoord);
-        // column name
-    	feature.setGeometryName('location');
-
-    	if(!confirm('등록하시겠습니까?')) {
-    		return false;
-    	}
-
-        transactWFS('insert', feature);
-    });*/
 
     var formatWFS = new ol.format.WFS();
     var formatGML = new ol.format.GML({
@@ -237,7 +228,7 @@ var MapInit = function(policy) {
         	node = formatWFS.writeTransaction(null, [feature], null, formatGML);
         	break;
 
-        	case 'delete':
+        case 'delete':
         	node = formatWFS.writeTransaction(null, null, [feature], formatGML);
         	break;
     	}
@@ -252,18 +243,14 @@ var MapInit = function(policy) {
             data: payload,
     	    success: function(data) {
     	    	console.log(formatWFS.readTransactionResponse(data));
-    	    	pokestopLayer.getSource().clear();
     	    },
     	    error: function(e) {
     	    	console.error(e);
     	    },
     	    context: this
     	}).done(function() {
-    	    drawLayer.getSource().clear();
-    	    selectDraw.getFeatures().clear();
-    	    removeInteraction();
-    	    //map.removeInteraction(draw);
-    	    //map.removeInteraction(select);
+    		Pokemap.GIS.clearMap();
+    	    Pokemap.GIS.removeInteraction();
     	});
     };
 
@@ -274,22 +261,17 @@ var MapInit = function(policy) {
      * @returns {Object} ol.Feature
      */
     var getFeatureByCoord = function(geomType, coord) {
-        // validation
-
         var shape = {
             'Point': new ol.geom.Point(coord),
             'LineString': new ol.geom.LineString(coord),
             'Polygon': new ol.geom.Polygon([coord])
         }
 
-        var feature = new ol.Feature({
+        return feature = new ol.Feature({
             geometry: shape[geomType],
             location: shape[geomType]	// for wfs-t
         });
-
-        return feature;
     }
-
 
     var transformTo4326 = function(coord) {
         var transCoord = [];
@@ -299,52 +281,40 @@ var MapInit = function(policy) {
         return transCoord;
     }
 
-    function removeInteraction() {
-		map.removeInteraction(selectDraw);
-		map.removeInteraction(draw);
-		map.removeInteraction(translate);
-	}
-
-    /*
-    draw.on('drawend', function(evt) {
-        var feature = evt.feature;
-        feature.set('geometry', feature.getGeometry());
-        var fid = feature.getId();
-        var node = format.writeTransaction([feature], null, null, {
-            gmlOptions: {srsName: "EPSG:3857"},
-            featureNS: "fiware",
-            featureType: "nyc_buildings"
-    });
-    */
 
     return {
     	create: function(element) {
     		map.setTarget(element);
     		return map;
     	},
-    	activeInteraction: function() {
-    		map.addInteraction(selectDraw);
+    	addInteraction: function() {
     		map.addInteraction(draw);
+    		map.addInteraction(drawSelect);
     		map.addInteraction(translate);
+    		draw.setActive(true);
     	},
-    	add: function() {
+    	removeInteraction: function() {
+    		map.removeInteraction(draw);
+    		map.removeInteraction(drawSelect);
+    		map.removeInteraction(translate);
+    	},
+    	addPoint: function() {
     		var feature = drawLayer.getSource().getFeatures()[0];
     		if(feature) {
             	var coord = feature.getGeometry().getCoordinates();
     	        var transCoord = transformTo4326(coord);
     			var newFeature = getFeatureByCoord('Point', transCoord);
     			newFeature.setGeometryName('location');
-    			draw.setActive(false);
     			transactWFS('insert', newFeature);
     		} else {
     			alert('지점을 선택해주세요.');
     		}
+    	},
+    	clearMap: function() {
+    	    drawLayer.getSource().clear();
+    	    drawSelect.getFeatures().clear();
+    	    pokestopLayer.getSource().clear();
+    	    pokestopSelect.getFeatures().clear();
     	}
     }
 }
-
-//var getCurProj: function() {
-//    return map.getView().getProjection();
-//},
-
-

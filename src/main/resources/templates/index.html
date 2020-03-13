@@ -269,13 +269,8 @@
 	Pokemap.Map = Pokemap.GIS.create('map');
 
 	$('#mode').on('click', function() {
-		var insert = $(this).is(':checked');
-		Pokemap.insertMode = insert;
-		$('#success').toggle();
-
-		if(insert) {
-			Pokemap.GIS.activeInteraction();
-		}
+		var start = $(this).is(':checked');
+		insertMode(start);
 	});
 
 	$('#success').on('click', function() {
@@ -283,12 +278,26 @@
 			return false;
 		}
 
-		$('#mode').prop('checked', false);
-		Pokemap.insertMode = false;
-		$('#success').hide();
-
-		Pokemap.GIS.add();
+		// 순서 중요
+		Pokemap.GIS.addPoint();
+		insertMode(false);
 	});
+
+	function insertMode(status) {
+		if(status) {
+			Pokemap.insertMode = true;
+			$('#mode').prop('checked', true);
+			$('#success').show();
+			Pokemap.GIS.clearMap();
+			Pokemap.GIS.addInteraction();
+		} else {
+			Pokemap.insertMode = false;
+			$('#mode').prop('checked', false);
+			$('#success').hide();
+			Pokemap.GIS.clearMap();
+			Pokemap.GIS.removeInteraction();
+		}
+	}
 </script>
 
 <div id="scrollToTop" class="scrollToTop mbr-arrow-up"><a style="text-align: center;"><i class="mbr-arrow-up-icon mbr-arrow-up-icon-cm cm-icon cm-icon-smallarrow-up"></i></a></div>
