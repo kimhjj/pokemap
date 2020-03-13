@@ -120,11 +120,8 @@ var MapInit = function(policy) {
 		}
 	});
 
-	var select = new ol.interaction.Select({
-		layers: [drawLayer]
-	});
 	var translate = new ol.interaction.Translate({
-	  features: select.getFeatures()
+	  features: selectDraw.getFeatures()
 	});
 
 	var draw = new ol.interaction.Draw({
@@ -134,14 +131,12 @@ var MapInit = function(policy) {
 			return true;
 		}
 	});
-	Pokemap.draw = draw;
 
 	selectPokestop.on('select', function(event) {
 	      var features = event.selected;
 	      for(var i in features) {
 	    	  var feature = features[i];
 	    	  var name = feature.getProperties().name;
-	    	  debugger
 	      }
 	});
 
@@ -149,8 +144,7 @@ var MapInit = function(policy) {
 		drawLayer.getSource().clear();
 	});
 	draw.on('drawend', function(event){
-		Pokemap.draw.setActive(false);
-		debugger
+		draw.setActive(false);
 	});
 
 //
@@ -192,7 +186,7 @@ var MapInit = function(policy) {
         renderer: 'canvas',
         interactions: ol.interaction.defaults({
             shiftDragZoom : true
-        }).extend([selectPokestop, selectDraw, draw, select, translate]),	//new app.Drag(),
+        }).extend([selectPokestop]),	//new app.Drag(),
         view : new ol.View({
             projection: 'EPSG:3857',
             center: new ol.geom.Point(centerPoint).transform('EPSG:4326', 'EPSG:3857').getCoordinates(),
@@ -248,28 +242,28 @@ var MapInit = function(policy) {
         	break;
     	}
 
-    	$.ajax({
-    	    service: 'WFS',
-    	    type: "POST",
-    	    url: "http://localhost:8080/geoserver/pokemap/wfs",
-    	    dataType: 'xml',
-    	    processData: false,
-    	    contentType: 'text/xml',
-    	    data: new XMLSerializer().serializeToString(node),
-    	    contentType: 'text/xml',
+    	var payload = new XMLSerializer().serializeToString(node);
+    	$.ajax('http://localhost:8080/geoserver/pokemap/wfs', {
+    		service: 'WFS',
+            type: 'POST',
+            dataType: 'xml',
+            processData: false,
+            contentType: 'text/xml',
+            data: payload,
     	    success: function(data) {
-    	    	debugger
     	    	console.log(formatWFS.readTransactionResponse(data));
+    	    	pokestopLayer.getSource().clear();
     	    },
     	    error: function(e) {
     	    	console.error(e);
     	    },
     	    context: this
-//    	}).done(function() {
-//    	    vectorSource.clear();
-//    	    map.removeInteraction(draw);
-//    	    map.removeInteraction(select);
-//    	    select.getFeatures().clear();
+    	}).done(function() {
+    	    drawLayer.getSource().clear();
+    	    selectDraw.getFeatures().clear();
+    	    removeInteraction();
+    	    //map.removeInteraction(draw);
+    	    //map.removeInteraction(select);
     	});
     };
 
@@ -305,6 +299,12 @@ var MapInit = function(policy) {
         return transCoord;
     }
 
+    function removeInteraction() {
+		map.removeInteraction(selectDraw);
+		map.removeInteraction(draw);
+		map.removeInteraction(translate);
+	}
+
     /*
     draw.on('drawend', function(evt) {
         var feature = evt.feature;
@@ -321,6 +321,11 @@ var MapInit = function(policy) {
     	create: function(element) {
     		map.setTarget(element);
     		return map;
+    	},
+    	activeInteraction: function() {
+    		map.addInteraction(selectDraw);
+    		map.addInteraction(draw);
+    		map.addInteraction(translate);
     	},
     	add: function() {
     		var feature = drawLayer.getSource().getFeatures()[0];

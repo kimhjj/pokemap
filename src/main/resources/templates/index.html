@@ -262,20 +262,20 @@
 <script src="/js/research.js"></script>
 <script type="text/javascript">
 	var Pokemap = Pokemap||{
-		insertMode: false,
-		draw: null
+		insertMode: false
 	};
 
 	Pokemap.GIS = new MapInit({});
 	Pokemap.Map = Pokemap.GIS.create('map');
 
-	Pokemap.draw.setActive(Pokemap.insertMode);
 	$('#mode').on('click', function() {
 		var insert = $(this).is(':checked');
 		Pokemap.insertMode = insert;
-		Pokemap.draw.setActive(Pokemap.insertMode);
-
 		$('#success').toggle();
+
+		if(insert) {
+			Pokemap.GIS.activeInteraction();
+		}
 	});
 
 	$('#success').on('click', function() {
