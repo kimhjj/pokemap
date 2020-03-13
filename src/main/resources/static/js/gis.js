@@ -14,10 +14,9 @@ var MapInit = function(policy) {
 	        url : 'http://xdworld.vworld.kr:8080/2d/Base/201512/{z}/{x}/{y}.png'
 	    })
 	});
-	var pokestopLayer = new ol.layer.Image({
-        id: 'pokestop_layer',
+	var gymLayer = new ol.layer.Image({
+        id: 'gym_layer',
         visible: true,
-        //zIndex : 30,
         source: new ol.source.ImageWMS({
             url: 'http://localhost:8080/geoserver/pokemap/wms',
             params: {
@@ -25,24 +24,114 @@ var MapInit = function(policy) {
                 'SRS': 'EPSG:3857',
                 'STYLES': 'pokestop',
                 tiled: true,
-                layers: ['pokestop_info']
+                layers: ['pokestop_info'],
                 //query_layers : wmsLayerKeys,
-                //CQL_FILTER: queryStrings
+                CQL_FILTER: "code='GYM'"
             }
         })
     });
-	var drawVector = new ol.layer.Vector({
-		id: 'draw_layer',
+
+	var pokestopLayer = new ol.layer.Vector({
+        id: 'pokestop_layer',
         visible: true,
-        //zIndex : 50,
+        zIndex : 50,
+        renderMode: 'vertor',
         source: new ol.source.Vector({
-            features: new ol.Collection()
-        })
+            format: new ol.format.GeoJSON(),
+            url: function(extent) {
+                var queryString = "code='STOP'";
+                var url = 'http://localhost:8080/geoserver/pokemap/wfs?service=WFS' +
+                    '&version=1.1.0&request=GetFeature&typename=pokestop_info&outputFormat=application/json&srsname=EPSG:3857' +
+                    '&CQL_FILTER='+queryString;
+                return url;
+            },
+            strategy: ol.loadingstrategy.bbox
+        }),
+        style:  new ol.style.Style({
+			image : new ol.style.Circle({
+				radius : 8,
+				fill : new ol.style.Fill({
+					color : 'rgb(0, 0, 255)'
+				}),
+				stroke : new ol.style.Stroke({
+					color : 'black',
+					width : 1
+				})
+			})
+		})
+    });
+
+	var source = new ol.source.Vector();
+	var drawVector = new ol.layer.Vector({
+		id : 'draw_layer',
+		visible : true,
+		// zIndex : 50,
+		source : source,
+		style : new ol.style.Style({
+			fill : new ol.style.Fill({
+				color : 'rgba(255, 255, 255, 0.2)'
+			}),
+			stroke : new ol.style.Stroke({
+				color : '#ffcc33',
+				width : 2
+			}),
+			image : new ol.style.Circle({
+				radius : 7,
+				fill : new ol.style.Fill({
+					color : '#ffcc33'
+				})
+			})
+		})
 	});
 
-	var selectInteraction = new ol.interaction.Select({
-		layers : [pokestopLayer]
+	var selectedStyle = function(feature) {
+		return style = new ol.style.Style({
+			image : new ol.style.Circle({
+				radius : 10,
+				fill : new ol.style.Fill({
+					color : 'rgb(97, 151, 255)'
+				}),
+				stroke : new ol.style.Stroke({
+					color : 'white',
+					width : 2
+				})
+			})
+		});
+	}
+
+	var selectPokestop = new ol.interaction.Select({
+		condition: ol.events.condition.click,
+		layers: [pokestopLayer],
+		style: selectedStyle,
+		filter: function(feature) {
+			if(!Pokemap.insertMode) {
+				return feature;
+			}
+		}
 	});
+
+	var selectDraw = new ol.interaction.Draw({
+		source: source,
+		type: 'Point'
+//		condition: function(feature, b, c) {
+//			debugger
+//		}
+	});
+	Pokemap.draw = selectDraw;
+
+	selectPokestop.on('select', function(event) {
+	      var features = event.selected;
+	      for(var i in features) {
+	    	  var feature = features[i];
+	    	  var name = feature.getProperties().name;
+	    	  debugger
+	      }
+	});
+//
+//	var addFeatures = selectDraw.getFeatures();
+//	addFeatures.on('add', function(event) {
+//	      debugger
+//    });
 
     // set map
     var map = new ol.Map({
@@ -63,12 +152,13 @@ var MapInit = function(policy) {
                 title: 'Base Maps',
                 layers: [
                     vworldTile,
-                    pokestopLayer
+                    gymLayer
                 ]
             }),
             new ol.layer.Group({
             	title: 'Vector',
             	layers: [
+                    pokestopLayer,
             		drawVector
             	]
             })
@@ -76,7 +166,7 @@ var MapInit = function(policy) {
         renderer: 'canvas',
         interactions: ol.interaction.defaults({
             shiftDragZoom : true
-        }).extend([new app.Drag(), selectInteraction]),
+        }).extend([selectPokestop, selectDraw]),	//new app.Drag(),
         view : new ol.View({
             projection: 'EPSG:3857',
             center: new ol.geom.Point(centerPoint).transform('EPSG:4326', 'EPSG:3857').getCoordinates(),
@@ -86,7 +176,7 @@ var MapInit = function(policy) {
         })
     });
 
-   /* map.on('singleclick', function(event){
+   /*map.on('singleclick', function(event){
         if (event.dragging) return;
 
         var coord = event.coordinate;
@@ -95,7 +185,9 @@ var MapInit = function(policy) {
         // column name
     	feature.setGeometryName('location');
 
-    	return if(confirm('등록하시겠습니까?'));
+    	if(!confirm('등록하시겠습니까?')) {
+    		return false;
+    	}
 
         transactWFS('insert', feature);
     });*/

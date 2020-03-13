@@ -76,7 +76,10 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6">
-            	<h2 class="pb-3 align-left mbr-fonts-style display-2"><strong>필드 리서치 위치 검색</strong></h2>
+            	<h2 class="pb-3 align-left mbr-fonts-style display-2">
+            		<strong>필드 리서치 위치 검색</strong>
+            		<input type="checkbox" id="mode" value="false">
+            	</h2>
                 <div id="map" class="google-map"></div>
             </div>
             <div class="col-md-6">
@@ -258,11 +261,19 @@
 <script src="/js/research.js"></script>
 <script type="text/javascript">
 	var Pokemap = Pokemap||{
-
+		insertMode: false,
+		draw: null
 	};
 
 	Pokemap.GIS = new MapInit({});
 	Pokemap.Map = Pokemap.GIS.create('map');
+
+	Pokemap.draw.setActive(false);
+	$('#mode').on('click', function() {
+		var insert = $(this).is(':checked');
+		Pokemap.insertMode = insert;
+		Pokemap.draw.setActive(insert);
+	});
 </script>
 
 <div id="scrollToTop" class="scrollToTop mbr-arrow-up"><a style="text-align: center;"><i class="mbr-arrow-up-icon mbr-arrow-up-icon-cm cm-icon cm-icon-smallarrow-up"></i></a></div>
