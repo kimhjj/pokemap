@@ -62,7 +62,7 @@ var MapInit = function(policy) {
     });
 
 	var source = new ol.source.Vector();
-	var drawVector = new ol.layer.Vector({
+	var drawLayer = new ol.layer.Vector({
 		id : 'draw_layer',
 		visible : true,
 		// zIndex : 50,
@@ -110,14 +110,29 @@ var MapInit = function(policy) {
 		}
 	});
 
-	var selectDraw = new ol.interaction.Draw({
-		source: source,
-		type: 'Point'
-//		condition: function(feature, b, c) {
-//			debugger
-//		}
+	var selectDraw = new ol.interaction.Select({
+		condition: ol.events.condition.click,
+		layers: [drawLayer],
+		filter: function(feature) {
+			if(Pokemap.insertMode) {
+				return feature;
+			}
+		}
 	});
-	Pokemap.draw = selectDraw;
+
+	var select = new ol.interaction.Select();
+	var translate = new ol.interaction.Translate({
+	  features: select.getFeatures()
+	});
+
+	var draw = new ol.interaction.Draw({
+		source: source,
+		type: 'Point',
+		condition: function(feature, b, c) {
+			return true;
+		}
+	});
+	Pokemap.draw = draw;
 
 	selectPokestop.on('select', function(event) {
 	      var features = event.selected;
@@ -127,6 +142,15 @@ var MapInit = function(policy) {
 	    	  debugger
 	      }
 	});
+
+	draw.on('drawstart', function(event){
+		drawLayer.getSource().clear();
+	});
+	draw.on('drawend', function(event){
+		Pokemap.draw.setActive(false);
+		debugger
+	});
+
 //
 //	var addFeatures = selectDraw.getFeatures();
 //	addFeatures.on('add', function(event) {
@@ -159,14 +183,14 @@ var MapInit = function(policy) {
             	title: 'Vector',
             	layers: [
                     pokestopLayer,
-            		drawVector
+            		drawLayer
             	]
             })
         ],
         renderer: 'canvas',
         interactions: ol.interaction.defaults({
             shiftDragZoom : true
-        }).extend([selectPokestop, selectDraw]),	//new app.Drag(),
+        }).extend([selectPokestop, selectDraw, draw, select, translate]),	//new app.Drag(),
         view : new ol.View({
             projection: 'EPSG:3857',
             center: new ol.geom.Point(centerPoint).transform('EPSG:4326', 'EPSG:3857').getCoordinates(),
@@ -295,6 +319,19 @@ var MapInit = function(policy) {
     	create: function(element) {
     		map.setTarget(element);
     		return map;
+    	},
+    	add: function() {
+    		var feature = drawLayer.getSource().getFeatures()[0];
+    		if(feature) {
+            	var coord = feature.getGeometry().getCoordinates();
+    	        var transCoord = transformTo4326(coord);
+    			var newFeature = getFeatureByCoord('Point', transCoord);
+    			newFeature.setGeometryName('location');
+    			draw.setActive(false);
+    			transactWFS('insert', newFeature);
+    		} else {
+    			alert('지점을 선택해주세요.');
+    		}
     	}
     }
 }

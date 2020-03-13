@@ -79,6 +79,7 @@
             	<h2 class="pb-3 align-left mbr-fonts-style display-2">
             		<strong>필드 리서치 위치 검색</strong>
             		<input type="checkbox" id="mode" value="false">
+            		<button type="button" id="success" style="display: none;">완료</button>
             	</h2>
                 <div id="map" class="google-map"></div>
             </div>
@@ -268,11 +269,25 @@
 	Pokemap.GIS = new MapInit({});
 	Pokemap.Map = Pokemap.GIS.create('map');
 
-	Pokemap.draw.setActive(false);
+	Pokemap.draw.setActive(Pokemap.insertMode);
 	$('#mode').on('click', function() {
 		var insert = $(this).is(':checked');
 		Pokemap.insertMode = insert;
-		Pokemap.draw.setActive(insert);
+		Pokemap.draw.setActive(Pokemap.insertMode);
+
+		$('#success').toggle();
+	});
+
+	$('#success').on('click', function() {
+		if(!confirm('해당 위치를 등록하시겠습니까?')){
+			return false;
+		}
+
+		$('#mode').prop('checked', false);
+		Pokemap.insertMode = false;
+		$('#success').hide();
+
+		Pokemap.GIS.add();
 	});
 </script>
 
