@@ -120,7 +120,9 @@ var MapInit = function(policy) {
 		}
 	});
 
-	var select = new ol.interaction.Select();
+	var select = new ol.interaction.Select({
+		layers: [drawLayer]
+	});
 	var translate = new ol.interaction.Translate({
 	  features: select.getFeatures()
 	});
