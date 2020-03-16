@@ -7,9 +7,10 @@ DROP SEQUENCE IF EXISTS public.pokestop_id_seq;
 CREATE TABLE public.pokestop_info (
 	pokestop_id				bigint				not null,
 	code					varchar(5),
-	name					varchar(256),
+	title					varchar(256),
 	location				geometry(Point, 4326),
-	use_yn					char(1)				default 'Y'
+	use_yn					char(1)				default 'Y',
+	research_yn				char(1)				default 'N'
 );
 
 --
@@ -18,9 +19,10 @@ CREATE TABLE public.pokestop_info (
 COMMENT ON TABLE public.pokestop_info IS '포켓스탑 정보';
 COMMENT ON COLUMN public.pokestop_info.pokestop_id IS '포켓스탑 정보 고유번호(PK)';
 COMMENT ON COLUMN public.pokestop_info.code IS '포켓스탑 종류';
-COMMENT ON COLUMN public.pokestop_info.name IS '포켓스탑 명';
+COMMENT ON COLUMN public.pokestop_info.title IS '포켓스탑 명';
 COMMENT ON COLUMN public.pokestop_info.location IS '위치';
 COMMENT ON COLUMN public.pokestop_info.use_yn IS '사용여부';
+COMMENT ON COLUMN public.pokestop_info.use_yn IS '리서치여부';
 
 --
 -- Type: CONSTRAINT;

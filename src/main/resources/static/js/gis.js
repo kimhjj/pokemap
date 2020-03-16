@@ -38,6 +38,17 @@ var MapInit = function(policy) {
         })
     });
 
+	var style = {
+		normal: {
+			Y: 'rgb(0, 0, 255)',
+			N: 'rgb(169, 169, 169)'
+		},
+		selected: {
+			Y: 'rgb(97, 151, 255)',
+			N: 'rgb(112, 128, 144)'
+		}
+	}
+
 	var pokestopLayer = new ol.layer.Vector({
         id: 'pokestop_layer',
         visible: true,
@@ -55,19 +66,40 @@ var MapInit = function(policy) {
             },
             strategy: ol.loadingstrategy.bbox
         }),
-        style:  new ol.style.Style({
+        style: function(feature) {
+        	var researchYn = feature.getProperties().research_yn;
+        	var color = style.normal[researchYn];
+        	return new ol.style.Style({
+    			image : new ol.style.Circle({
+    				radius : 8,
+    				fill : new ol.style.Fill({
+    					color : color
+    				}),
+    				stroke : new ol.style.Stroke({
+    					color : 'black',
+    					width : 1
+    				})
+    			})
+    		})
+        }
+    });
+
+	var selectedStyle = function(feature) {
+    	var researchYn = feature.getProperties().research_yn;
+    	var color = style.selected[researchYn];
+		return new ol.style.Style({
 			image : new ol.style.Circle({
-				radius : 8,
+				radius : 10,
 				fill : new ol.style.Fill({
-					color : 'rgb(0, 0, 255)'
+					color : color
 				}),
 				stroke : new ol.style.Stroke({
-					color : 'black',
-					width : 1
+					color : 'white',
+					width : 2
 				})
 			})
-		})
-    });
+		});
+	}
 
 	var source = new ol.source.Vector();
 	var drawLayer = new ol.layer.Vector({
@@ -92,20 +124,6 @@ var MapInit = function(policy) {
 		})
 	});
 
-	var selectedStyle = function(feature) {
-		return style = new ol.style.Style({
-			image : new ol.style.Circle({
-				radius : 10,
-				fill : new ol.style.Fill({
-					color : 'rgb(97, 151, 255)'
-				}),
-				stroke : new ol.style.Stroke({
-					color : 'white',
-					width : 2
-				})
-			})
-		});
-	}
 	var selectedDrawStyle = function(feature) {
 		return style = new ol.style.Style({
 			image : new ol.style.Circle({
@@ -135,7 +153,7 @@ var MapInit = function(policy) {
 	      var features = event.selected;
 	      for(var i in features) {
 	    	  var feature = features[i];
-	    	  var name = feature.getProperties().name;
+	    	  var title = feature.getProperties().title;
 	      }
 	});
 
@@ -223,14 +241,10 @@ var MapInit = function(policy) {
     	var node;
     	switch (action) {
         case 'insert':
-        	feature.set('code', 'STOP');
-        	feature.set('name', 'Insert Test test test');
         	node = formatWFS.writeTransaction([feature], null, null, formatGML);
         	break;
 
         case 'update':
-        	feature.set('code', 'STOP');
-        	feature.set('name', 'Update Update Update Update');
         	node = formatWFS.writeTransaction(null, [feature], null, formatGML);
         	break;
 
@@ -304,14 +318,19 @@ var MapInit = function(policy) {
     		map.removeInteraction(drawSelect);
     		map.removeInteraction(translate);
     	},
-    	addPoint: function() {
-    		var feature = drawLayer.getSource().getFeatures()[0];
-    		if(feature) {
-            	var coord = feature.getGeometry().getCoordinates();
+    	addPoint: function(data) {
+    		var drawPoint = drawLayer.getSource().getFeatures()[0];
+    		if(drawPoint) {
+            	var coord = drawPoint.getGeometry().getCoordinates();
     	        var transCoord = transformTo4326(coord);
-    			var newFeature = getFeatureByCoord('Point', transCoord);
-    			newFeature.setGeometryName('location');
-    			transactWFS('insert', newFeature);
+    			var feature = getFeatureByCoord('Point', transCoord);
+    			feature.setGeometryName('location');
+
+    			for(var property in data) {
+    				feature.set(property, data[property]);
+    			}
+
+    			transactWFS('insert', feature);
     		} else {
     			alert('지점을 선택해주세요.');
     		}
