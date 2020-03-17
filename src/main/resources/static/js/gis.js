@@ -150,12 +150,37 @@ var MapInit = function(policy) {
 		}
 	});
 	pokestopSelect.on('select', function(event) {
-	      var features = event.selected;
-	      for(var i in features) {
-	    	  var feature = features[i];
-	    	  var title = feature.getProperties().title;
-	      }
+		var features = event.selected;
+		var feature = features[0];
+		var overlayName = 'popup-overlay';
+
+		if (feature) {
+			var title = feature.get('title');
+	        var content = '<p>The location you clicked was:</p>' + title;
+	        var coordinate = feature.getGeometry().getCoordinates();
+	        showOverlayPopup(overlayName, coordinate, content);
+		} else {
+	    	clearOverlayPopup(overlayName);
+	    }
 	});
+
+	var showOverlayPopup = function(overlayName, coordinate, content) {
+		var overlay = map.getOverlayById(overlayName);
+        var element = overlay.getElement();
+	    if(overlay) {
+	        overlay.setPosition(coordinate);
+	    }
+	    $(element).html(content).visible();
+	}
+
+	var clearOverlayPopup = function(overlayName) {
+		var overlay = map.getOverlayById(overlayName);
+        var element = overlay.getElement();
+	    if(overlay) {
+	        overlay.setPosition(undefined);
+	    }
+	    $(element).invisible();
+	}
 
 	// insert
 	var draw = new ol.interaction.Draw({
@@ -183,6 +208,18 @@ var MapInit = function(policy) {
 	var translate = new ol.interaction.Translate({
 		features : drawSelect.getFeatures()
 	});
+
+	// 지도 위 팝업
+    var popupOverlay = new ol.Overlay({
+        id: 'popup-overlay',
+        element: document.getElementById('popupOverlay'),
+        autoPan: true,
+        autoPanAnimation: {
+            duration: 250
+        },
+        offset: [10, 10],
+        positioning: 'top'
+    });
 
     // set map
     var map = new ol.Map({
@@ -224,7 +261,8 @@ var MapInit = function(policy) {
             zoom: 14,
             minZoom: 7,
             maxZoom: 19
-        })
+        }),
+        overlays: [popupOverlay]
     });
 
     var formatWFS = new ol.format.WFS();

@@ -17,6 +17,17 @@
 			$('html, body').css({'overflow': 'auto', 'height': 'unset'});
 			$(this).hide();
 			$('.popup-content input', this).val('');
+		},
+		visible: function () {
+			return this.css('visibility', 'visible');
+		},
+		invisible: function () {
+			return this.css('visibility', 'hidden');
+		},
+		visibilityToggle: function () {
+			return this.css('visibility', function (i, visibility) {
+				return (visibility =="visible")? 'hidden' : 'visible';
+			});
 		}
 	});
 })(jQuery);
