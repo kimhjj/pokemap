@@ -16,23 +16,22 @@
 	width: calc(100% - 60px);
 	height: calc(100% - 200px);
 	background: white;
-	border-radius: 10px;
+	border-radius: 5px;
 }
 
 .overlay {
 	visibility: hidden;
 	width: 200px;
-	background-color: Indigo;
-	color: yellow;
-	text-align: center;
-	border-radius: 10px;
-	padding: 10px 5px;
+	height: 80px;
+	background-color: white;
+	/* padding: 10px 5px; */
 	position: absolute;
 	z-index: 1;
 	top: 200%;
 	left: 50%;
 	margin-left: -110px;
-	margin-top: -138px;
+	margin-top: -110px;
+	border-radius: 5px;
 }
 .overlay::after {
 	content: "";
@@ -43,7 +42,34 @@
 	margin-left: -10px;
 	border-width: 10px;
 	border-style: solid;
-	border-color: Indigo transparent transparent transparent;
+	border-color: white transparent transparent transparent;
+}
+.ovTitle {
+	background-color: #073b4c;
+	border-radius: 5px 5px 0 0;
+	color: white;
+	text-align: center;
+	height: 35px;
+	padding: 5px;
+}
+.ovContent {
+	text-align: center;
+	font-size: .8rem;
+	padding: 9px;
+}
+.ovButton {
+	font-size: .7rem;
+	border-radius: 5px;
+	border: none;
+	margin: 3px;
+}
+.ovButton.save {
+	background-color: green;
+	color: white;
+}
+.ovButton.closee {
+	background-color: #d9d9d9;
+	color: black;
 }
 
 /** 하단 말풍선

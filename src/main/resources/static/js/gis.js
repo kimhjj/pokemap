@@ -156,7 +156,14 @@ var MapInit = function(policy) {
 
 		if (feature) {
 			var title = feature.get('title');
-	        var content = '<p>The location you clicked was:</p>' + title;
+			var research = feature.get('research');
+			var content = '<div class="ovTitle">' + title + '</div>'
+	        			+ '<div class="ovContent">'
+	        			+ 	'<button type="button" id="saveResearch" class="ovButton save">리서치 등록하기</button>'
+//	        			+ 	'<button type="button" id="saveResearch" class="ovButton closee">닫기</button>'
+	        			+ '</div>';
+			// TODO: research 텍스트를 어떻게 하지 ? 레이어에 넣어야 하나? 아니면 한번 더 조회?
+
 	        var coordinate = feature.getGeometry().getCoordinates();
 	        showOverlayPopup(overlayName, coordinate, content);
 		} else {
