@@ -156,10 +156,11 @@ var MapInit = function(policy) {
 
 		if (feature) {
 			var title = feature.get('title');
-			var research = feature.get('research');
+			var research = feature.get('research_yn');
+			research = (research === 'Y') ? research : '<button type="button" id="saveResearch" class="ovButton save">리서치 등록하기</button>';
 			var content = '<div class="ovTitle">' + title + '</div>'
 	        			+ '<div class="ovContent">'
-	        			+ 	'<button type="button" id="saveResearch" class="ovButton save">리서치 등록하기</button>'
+	        			+ 	research
 //	        			+ 	'<button type="button" id="saveResearch" class="ovButton closee">닫기</button>'
 	        			+ '</div>';
 			// TODO: research 텍스트를 어떻게 하지 ? 레이어에 넣어야 하나? 아니면 한번 더 조회?
