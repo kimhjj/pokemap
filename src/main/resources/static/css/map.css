@@ -1,0 +1,39 @@
+.map {
+position: relative;
+width: 300px;
+height: 300px;
+}
+.ctrl {
+position: absolute;
+right: 3px;
+bottom: 50px;
+}
+.ctrl>div {
+width: 30px;
+border-radius: 17px;
+background-color: rgba(0, 0, 0, 0.3);
+}
+.ol-zoom,
+.ol-zoom:hover {
+top: auto;
+left: auto;
+bottom: 115px;
+right: 3px;
+border-radius: 0;
+background: rgba(0, 0, 0, .3);
+}
+.ol-zoom .ol-zoom-in {
+border-radius: 50%;
+background-position: 0 0;
+}
+.ol-zoom .ol-zoom-out {
+border-radius: 50%;
+background-position: -50px 0;
+}
+.ol-zoom.ol-unselectable.ol-control {
+border-bottom-left-radius: 16px;
+border-bottom-right-radius: 16px;
+border-top-left-radius: 16px;
+border-top-right-radius: 16px;
+}
+

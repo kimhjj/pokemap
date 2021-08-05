@@ -1,253 +1,79 @@
 <!DOCTYPE html>
 <html >
 <head>
-	<!-- Site made with Mobirise Website Builder v4.12.2, https://mobirise.com -->
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="generator" content="Mobirise v4.12.2, mobirise.com">
 	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-	<link rel="shortcut icon" href="/assets/images/logo2.png" type="image/x-icon">
 	<meta name="description" content="">
 
 	<title>Home</title>
-	<link rel="stylesheet" href="/assets/web/assets/mobirise-icons/mobirise-icons.css">
-	<link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" href="/assets/bootstrap/css/bootstrap-grid.min.css">
-	<link rel="stylesheet" href="/assets/bootstrap/css/bootstrap-reboot.min.css">
-	<link rel="stylesheet" href="/assets/socicon/css/styles.css">
-	<link rel="stylesheet" href="/assets/dropdown/css/style.css">
-	<link rel="stylesheet" href="/assets/tether/tether.min.css">
-	<link rel="stylesheet" href="/assets/theme/css/style.css">
-	<link rel="preload" as="style" href="/assets/mobirise/css/mbr-additional.css">
-	<link rel="stylesheet" href="/assets/mobirise/css/mbr-additional.css" type="text/css">
+	<link rel="stylesheet" href="/css/ol.css">
+	<link rel="stylesheet" href="/css/reset.css">
+	<link rel="stylesheet" href="/css/map.css">
 	<link rel="stylesheet" href="/css/custom.css">
+	
+	<script src="/externlib/jquery-3.4.1/jquery.min.js"></script>
+	<script src="/externlib/proj4js-2.4.3/proj4.min.js"></script>
+	<script src="/externlib/ol/ol.js"></script>
+	
+	<script src="/js/gis.js"></script>
+	<script src="/js/research.js"></script>
+	<script type="text/javascript">
+	
+		var map = new pokemap({
+		    target: "map",
+		});
+	
+	</script>
 </head>
 
 <body>
 <div class="content">
-	<section class="menu cid-qTkzRZLJNu" once="menu" id="menu1-0">
-	    <nav class="navbar navbar-expand beta-menu navbar-dropdown align-items-center navbar-fixed-top navbar-toggleable-sm bg-color transparent">
-	        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-	            <div class="hamburger">
-	                <span></span>
-	                <span></span>
-	                <span></span>
-	                <span></span>
-	            </div>
-	        </button>
-	        <div class="menu-logo">
-	            <div class="navbar-brand">
-	                <span class="navbar-caption-wrap"><a class="navbar-caption text-white display-4" href="https://mobirise.com">POKEMAP</a></span>
-	            </div>
-	        </div>
-	        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-	            <ul class="navbar-nav nav-dropdown nav-right" data-app-modern-menu="true">
-	            	<li id="registerPokestopMode" class="nav-item">
-						<a class="nav-link link text-white display-4" href="#"><span class="mbri-pin mbr-iconfont mbr-iconfont-btn"></span>
-		                	Register pokestop
-		                </a>
-	                </li>
-	                <li id="registerResearchMode" class="nav-item">
-	                    <a class="nav-link link text-white display-4" href="#"><span class="mbri-setting3 mbr-iconfont mbr-iconfont-btn"></span>
-	                        Manage research
-	                    </a>
-	                </li>
-				</ul>
-	        </div>
-	    </nav>
-	</section>
+	<div>
+		<div>POKEMAP</div>
+		<div>Research</div>
+		<div class="admin-mode">
+			<ul>
+				<li id="registerPokestopMode" class="nav-item">Register pokestop</li>
+				<li id="registerResearchMode" class="nav-item">Manage research</li>
+			</ul>
+		</div>
+	</div>
 
-	<section class="cid-qTkA127IK8" id="header2-1">
-	    <div class="container align-center">
-	        <div class="row justify-content-md-center">
-	            <div class="mbr-white col-md-10">
-	                <h1 class="mbr-section-title mbr-bold pb-3 mbr-fonts-style display-1">
-	                    Research</h1>
-	            </div>
-	        </div>
-	    </div>
-	    <!-- <div class="mbr-arrow hidden-sm-down" aria-hidden="true">
-	        <a href="#next">
-	            <i class="mbri-down mbr-iconfont"></i>
-	        </a>
-	    </div> -->
-	</section>
+	<div>
+		<div>Map</div>
+		<input type="checkbox" id="mode" value="false" style="display: none;">
+		<button type="button" id="success" style="font-size: 10px; display: none;">완료</button>
+		<div id="map" class="map"></div>
+		
+	</div>
 
-	<section class="mbr-section form4 cid-rS9V7PvZgj" id="form4-a">
-	    <div class="container">
-	        <div class="row">
-	            <div class="col-md-6">
-	            	<h2 class="pb-3 align-left mbr-fonts-style display-2">
-	            		<strong>필드 리서치 위치 검색</strong>
-	            		<input type="checkbox" id="mode" value="false" style="display: none;">
-	            		<button type="button" id="success" style="font-size: 10px; display: none;">완료</button>
-	            	</h2>
-	                <div id="map" class="google-map"></div>
-	            </div>
-	            <div class="col-md-6">
-	                <h2 class="pb-3 align-left mbr-fonts-style display-2"><strong>지도 범례</strong></h2>
-	                <div class="pb-5">
-	                    <div class="icon-block pb-3">
-	                   		<span class="icon-block__icon">
-	                            <span class="mbr-iconfont mbri-like" style="font-size: 32px;"></span>
-	                        </span>
-	                        <h4 class="icon-block__title align-left mbr-fonts-style display-5">
-	                        	<span style="font-style: normal;">체육관</span>
-	                        </h4>
-	                    </div>
-	                    <div class="icon-block pb-3">
-	                    	<span class="icon-block__icon">
-	                            <span class="mbr-iconfont mbri-letter" style="font-size: 32px;"></span>
-	                        </span>
-	                        <h4 class="icon-block__title align-left mbr-fonts-style display-5">
-	                        	<span style="font-style: normal;">스탑</span>
-	                        </h4>
-	                    </div>
-	                </div>
-	                <h2 class="pb-3 align-left mbr-fonts-style display-2"><strong>보상 검색</strong></h2>
-	                <div class="pb-5">
-	                    <div class="icon-block pb-3">
-	                   		<span class="icon-block__icon">
-	                            <span class="mbr-iconfont mbri-like" style="font-size: 32px;"></span>
-	                        </span>
-	                        <h4 class="icon-block__title align-left mbr-fonts-style display-5">
-	                        	<span style="font-style: normal;">스탑 - 리서치를 입력해주세요.</span>
-	                        </h4>
-	                    </div>
-	                    <div class="icon-block pb-3">
-	                    	<span class="icon-block__icon">
-	                            <span class="mbr-iconfont mbri-letter" style="font-size: 32px;"></span>
-	                        </span>
-	                        <h4 class="icon-block__title align-left mbr-fonts-style display-5">
-	                        	<span style="font-style: normal;">스탑 - 리서치를 확인해보세요.</span>
-	                        </h4>
-	                    </div>
-	                    <!-- <div class="icon-contacts pb-3">
-	                        <h5 class="align-left mbr-fonts-style display-7">
-	                            Ready for offers and cooperation
-	                        </h5>
-	                        <p class="mbr-text align-left mbr-fonts-style display-7">
-	                            Phone: +1 (0) 000 0000 001 <br>
-	                            Email: youremail@mail.com
-	                        </p>
-	                    </div> -->
-     				</div>
-	            </div>
-	        </div>
-	    </div>
-	    <div class="mbr-arrow hidden-sm-down" aria-hidden="true">
-	        <a href="#next">
-	            <i class="mbri-down mbr-iconfont"></i>
-	        </a>
-	    </div>
-	</section>
-
-	<section class="section-table cid-rSbBa3E5xJ" id="table1-x">
-	  	<div class="container container-table">
-	        <div class="row">
-		  		<div class="col-md-6">
-					<h2 class="pb-3 align-left mbr-fonts-style display-2"><strong>필드 리서치 보상 검색</strong></h2>
+	<div>
+		<div>필드 리서치 보상 검색</div>
+		<div class="container">
+			<div class="row search">
+				<div class="mbr-section-btn align-center research">
+					<a class="btn-group btn-toggle display-4" data-code="TH">던지기</a>
+					<a class="btn-group btn-toggle display-4" data-code="EV">진화</a>
+					<a class="btn-group btn-toggle display-4" data-code="PO">강화</a>
+					<a class="btn-group btn-toggle display-4" data-code="CA">잡기</a>
+					<a class="btn-group btn-toggle display-4" data-code="HA">부화</a>
+					<a class="btn-group btn-toggle display-4" data-code="BA">배틀</a>
+					<a class="btn-group btn-toggle display-4" data-code="ETC">기타</a>
 				</div>
 			</div>
-	      	<div class="container">
-	         	<div class="row search">
-	               	<div class="mbr-section-btn align-center research">
-	                    <a class="btn-group btn-toggle display-4" data-code="TH">던지기</a>
-	                    <a class="btn-group btn-toggle display-4" data-code="EV">진화</a>
-	                    <a class="btn-group btn-toggle display-4" data-code="PO">강화</a>
-	                    <a class="btn-group btn-toggle display-4" data-code="CA">잡기</a>
-	                    <a class="btn-group btn-toggle display-4" data-code="HA">부화</a>
-	                    <a class="btn-group btn-toggle display-4" data-code="BA">배틀</a>
-	                    <a class="btn-group btn-toggle display-4" data-code="ETC">기타</a>
-	               	</div>
-	           	</div>
-	        </div>
-	      	<h3 class="mbr-section-subtitle mbr-fonts-style align-right mbr-light display-5 pb-5">(2020년 3월 3일)</h3>
-		    <div class="container">
-		        <div class="row">	<!-- media-container-row -->
-		            <div class="mbr-text counter-container col-12 col-md-8 mbr-fonts-style display-7">
-		                <ul id="researchListView">
-			                <li>
-			                	<strong>키워드를 클릭해보세요.</strong><br />
-			                	<span>던지기/진화/강화/잡기/부화/배틀/기타</span>
-			                </li>
-		                </ul>
-		            </div>
-		        </div>
-		    </div>
 		</div>
-	</section>
-
-	<section class="cid-rS9Uw6pEvx" id="footer5-8">
-	    <div class="container">
-	        <div class="media-container-row">
-	            <div class="col-md-3">
-	                <div class="media-wrap">
-	                    <a href="https://mobirise.co/">
-	                       <img src="assets/images/logo2.png" alt="Mobirise">
-	                    </a>
-	                </div>
-	            </div>
-	            <div class="col-md-9">
-	                <p class="mbr-text align-right links mbr-fonts-style display-7">
-	                    <a href="#" class="text-black">ABOUT</a> &nbsp;&nbsp;&nbsp;&nbsp;
-	                    <a href="#" class="text-black">TERMS</a> &nbsp;&nbsp;&nbsp;&nbsp;
-	                    <a href="#" class="text-black">CAREERS</a> &nbsp;&nbsp;&nbsp;&nbsp;
-	                    <a href="#" class="text-black">CONTACT</a>
-	                </p>
-	            </div>
-	        </div>
-	        <div class="footer-lower">
-	            <div class="media-container-row">
-	                <div class="col-md-12">
-	                    <hr>
-	                </div>
-	            </div>
-	            <div class="media-container-row mbr-white">
-	                <div class="col-md-6 copyright">
-	                    <p class="mbr-text mbr-fonts-style display-7">
-	                        © Copyright 2019 Mobirise - All Rights Reserved
-	                    </p>
-	                </div>
-	                <div class="col-md-6">
-	                    <div class="social-list align-right">
-	                        <div class="soc-item">
-	                            <a href="https://twitter.com/mobirise" target="_blank">
-	                                <span class="socicon-twitter socicon mbr-iconfont mbr-iconfont-social"></span>
-	                            </a>
-	                        </div>
-	                        <div class="soc-item">
-	                            <a href="https://www.facebook.com/pages/Mobirise/1616226671953247" target="_blank">
-	                                <span class="socicon-facebook socicon mbr-iconfont mbr-iconfont-social"></span>
-	                            </a>
-	                        </div>
-	                        <div class="soc-item">
-	                            <a href="https://www.youtube.com/c/mobirise" target="_blank">
-	                                <span class="socicon-youtube socicon mbr-iconfont mbr-iconfont-social"></span>
-	                            </a>
-	                        </div>
-	                        <div class="soc-item">
-	                            <a href="https://instagram.com/mobirise" target="_blank">
-	                                <span class="socicon-instagram socicon mbr-iconfont mbr-iconfont-social"></span>
-	                            </a>
-	                        </div>
-	                        <div class="soc-item">
-	                            <a href="https://plus.google.com/u/0/+Mobirise" target="_blank">
-	                                <span class="socicon-googleplus socicon mbr-iconfont mbr-iconfont-social"></span>
-	                            </a>
-	                        </div>
-	                        <div class="soc-item">
-	                            <a href="https://www.behance.net/Mobirise" target="_blank">
-	                                <span class="socicon-behance socicon mbr-iconfont mbr-iconfont-social"></span>
-	                            </a>
-	                        </div>
-	                    </div>
-	                </div>
-	            </div>
-	        </div>
-	    </div>
-	</section>
+		<div class="container">
+			<ul id="researchListView">
+				<li>
+					<strong>키워드를 클릭해보세요.</strong><br />
+					<span>던지기/진화/강화/잡기/부화/배틀/기타</span>
+				</li>
+			</ul>
+		</div>
+	</div>
 </div>
+
 <div id="popupRegistPokestop" class="popup">
 	<div class="popup-content">
 		<div style="margin: 30px;">
@@ -272,95 +98,5 @@
 <div id="popupOverlay" class="overlay" title="Infomation">
 
 </div>
-<script src="/assets/web/assets/jquery/jquery.min.js"></script>
-<script src="/assets/popper/popper.min.js"></script>
-<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
-<script src="/assets/smoothscroll/smooth-scroll.js"></script>
-<script src="/assets/dropdown/js/nav-dropdown.js"></script>
-<script src="/assets/dropdown/js/navbar-dropdown.js"></script>
-<script src="/assets/touchswipe/jquery.touch-swipe.min.js"></script>
-<script src="/assets/tether/tether.min.js"></script>
-<script src="/assets/theme/js/script.js"></script>
-<script src="/assets/formoid/formoid.min.js"></script>
-<script src="/externlib/jquery-3.4.1/jquery.min.js"></script>
-<!-- <script src="/externlib/proj4js-2.4.3/proj4.min.js"></script> -->
-<script src="/externlib/ol-5.3.0/ol.js"></script>
-<script src="/js/uiControll.js"></script>
-<script src="/js/gis.js"></script>
-<script src="/js/research.js"></script>
-<script type="text/javascript">
-	var Pokemap = Pokemap||{
-		insertMode: false
-	};
-
-	Pokemap.GIS = new MapInit({});
-	Pokemap.Map = Pokemap.GIS.create('map');
-
-	$('#registerPokestopMode').on('click', function() {
-		$('#mode').show();
-	});
-
-	$('#mode').on('click', function() {
-		var start = $(this).is(':checked');
-		insertMode(start);
-	});
-
-	$('#success').on('click', function() {
-		if(!confirm('해당 위치를 등록하시겠습니까?')){
-			return false;
-		}
-
-		$('#popupRegistPokestop').openPopup();
-	});
-
-	$('#save').on('click', function() {
-		if(!validation()) return false;
-
-		var data = {
-			'code': $('#code').val(),
-			'title': $('#title').val(),
-			'use_yn': 'Y',
-			'research_yn': 'N'
-		}
-
-		// 순서 중요
-		Pokemap.GIS.addPoint(data);
-		insertMode(false);
-
-		$('#popupRegistPokestop').closePopup();
-	});
-
-	function insertMode(status) {
-		if(status) {
-			Pokemap.insertMode = true;
-			$('#mode').prop('checked', true);
-			$('#success').show();
-			Pokemap.GIS.clearMap();
-			Pokemap.GIS.addInteraction();
-		} else {
-			Pokemap.insertMode = false;
-			$('#mode').prop('checked', false);
-			$('#success').hide();
-			Pokemap.GIS.clearMap();
-			Pokemap.GIS.removeInteraction();
-		}
-	}
-
-	function validation() {
-		if(!$('#code').val()) {
-			alert('코드를 선택해주세요.');
-			$('#code').focus();
-			return false;
-		} else if(!$('#title').val()) {
-			alert('제목을 입력해주세요.');
-			$('#title').focus();
-			return false;
-		}
-		return true;
-	}
-
-</script>
-
-<div id="scrollToTop" class="scrollToTop mbr-arrow-up"><a style="text-align: center;"><i class="mbr-arrow-up-icon mbr-arrow-up-icon-cm cm-icon cm-icon-smallarrow-up"></i></a></div>
 </body>
 </html>
